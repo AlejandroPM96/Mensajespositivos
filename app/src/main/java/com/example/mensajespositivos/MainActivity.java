@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         textView.setBackgroundColor(Color.WHITE);
         root.setBackgroundColor(Color.WHITE);
-        button.setBackgroundColor(Color.WHITE);
+        button.setBackgroundColor(Color.GRAY);
 
     }
     private String[] mensajes = {
