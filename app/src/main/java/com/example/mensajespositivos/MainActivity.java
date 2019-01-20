@@ -1,39 +1,113 @@
 package com.example.mensajespositivos;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
     private Switch colorSwitch;
+    private int currentIndex;
+    private TextView input;
+    private static final String TAG = "MyActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        input=findViewById(R.id.numeroMens);
         textView = findViewById(R.id.mensaje);
+        colorSwitch=findViewById(R.id.colorSwitch);
+
         textView.setText("Hola, me siento bien electrico uuu aaaa!");
 
-        colorSwitch=findViewById(R.id.colorSwitch);
+        currentIndex=0;
     }
 
     public  void siguiente(View view){
-        int randomo = (int)(Math.random() * mensajes.length);
-        View root = view.getRootView();
-        textView.setText(mensajes[randomo]);
 
+        switch (view.getId()) {
+            case R.id.siguiente:
+                int random = (int)(Math.random() * mensajes.length);
+                textView.setText(mensajes[random]);
+                currentIndex=random;
+                break;
+            case R.id.anterior:
+                if(currentIndex-1<0){
+                    currentIndex=mensajes.length-1;
+                    textView.setText(mensajes[currentIndex]);
+                }else{
+                    currentIndex-=1;
+                    textView.setText(mensajes[currentIndex]);
+                }
+                break;
+            case R.id.siguiente2:
+                if(currentIndex+1>mensajes.length-1){
+                    currentIndex=0;
+                    textView.setText(mensajes[currentIndex]);
+                }else{
+                    currentIndex+=1;
+                    textView.setText(mensajes[currentIndex]);
+                }
+                break;
+            case R.id.specific:
+                String inputSt=input.getText().toString();
+                System.out.println(inputSt);
+                try
+                {
+                    int input = Integer.parseInt(inputSt);
+                    if(input>0&&input<mensajes.length-1){
+                        currentIndex=input;
+                        textView.setText(mensajes[currentIndex]);
+                    }else{
+
+                        Context context=getApplicationContext();
+                        CharSequence text=("");
+                        if(input<0){
+                            text=("Por favor ingresa un numero mayor a 0");
+                        }else{
+                            text=("Por favor ingresa un menor a " + (mensajes.length-1));
+                        }
+                        int duration=Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+
+                        Log.e(TAG,"Se ingreso un numero fuera del rango de la base de datos");
+                    }
+                }
+                catch(NumberFormatException nfe)
+                {
+                    Context context=getApplicationContext();
+                    CharSequence text=("Por favor ingresa un numero valido");
+                    int duration=Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+
+                    Log.e(TAG,"Se ingreso un caracter invalido");
+                }
+                break;
+
+        }
+
+        View root = view.getRootView();
         int[] colors = {Color.argb(255, (int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)),Color.argb(255, (int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)),Color.argb(255, (int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256))};
+
         if(colorSwitch.isChecked()) {
             view.setBackgroundColor(colors[0]);
             root.setBackgroundColor(colors[1]);
             textView.setBackgroundColor(colors[2]);
         }
+
+
     }
 
     public void colorReset(View view){
